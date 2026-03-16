@@ -3,8 +3,17 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import { Layout } from "@/components/Layout";
+import Dashboard from "@/pages/Dashboard";
+import RateManager from "@/pages/RateManager";
+import AiCommandCenter from "@/pages/AiCommandCenter";
+import Reports from "@/pages/Reports";
+import ChannelManager from "@/pages/ChannelManager";
+import DirectBooking from "@/pages/DirectBooking";
+import RevenueCalendar from "@/pages/RevenueCalendar";
+import GuestRevenue from "@/pages/GuestRevenue";
+import Campaigns from "@/pages/Campaigns";
+import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -15,8 +24,17 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route element={<Layout />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/rates" element={<RateManager />} />
+            <Route path="/ai-center" element={<AiCommandCenter />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/channels" element={<ChannelManager />} />
+            <Route path="/direct-booking" element={<DirectBooking />} />
+            <Route path="/calendar" element={<RevenueCalendar />} />
+            <Route path="/guests" element={<GuestRevenue />} />
+            <Route path="/campaigns" element={<Campaigns />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
