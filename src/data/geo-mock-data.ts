@@ -51,6 +51,19 @@ export interface Competitor {
   topQueries: string[];
 }
 
+export interface GeoIssue {
+  id: string;
+  plainTitle: string;
+  plainDescription: string;
+  plainFix: string;
+  impact: 1 | 2 | 3;
+  status: "red" | "yellow" | "green";
+  autoFixable: boolean;
+  category: "accuracy" | "visibility" | "content" | "reviews";
+  platform?: string;
+  fixed: boolean;
+}
+
 export interface CampaignTemplate {
   id: string;
   type: "blog" | "faq" | "social" | "email" | "press" | "review";
