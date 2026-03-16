@@ -51,6 +51,19 @@ export interface Competitor {
   topQueries: string[];
 }
 
+export interface GeoIssue {
+  id: string;
+  plainTitle: string;
+  plainDescription: string;
+  plainFix: string;
+  impact: 1 | 2 | 3;
+  status: "red" | "yellow" | "green";
+  autoFixable: boolean;
+  category: "accuracy" | "visibility" | "content" | "reviews";
+  platform?: string;
+  fixed: boolean;
+}
+
 export interface CampaignTemplate {
   id: string;
   type: "blog" | "faq" | "social" | "email" | "press" | "review";
@@ -491,6 +504,81 @@ export const geoScoreHistory = [
   { month: "Jan", score: 63, chatgpt: 67, gemini: 62, perplexity: 74, googleAi: 70, bingCopilot: 52, metaAi: 36 },
   { month: "Feb", score: 67, chatgpt: 70, gemini: 65, perplexity: 78, googleAi: 73, bingCopilot: 55, metaAi: 40 },
   { month: "Mar", score: 71, chatgpt: 72, gemini: 68, perplexity: 81, googleAi: 75, bingCopilot: 58, metaAi: 45 },
+];
+
+export const geoIssues: GeoIssue[] = [
+  {
+    id: "gi-1", plainTitle: "AI shows wrong room prices",
+    plainDescription: "ChatGPT tells guests your rooms start at ₹18,000/night — but your actual rate is ₹22,000. Guests arrive expecting the wrong price.",
+    plainFix: "We'll update your website's pricing data so AI platforms pick up the correct rates.",
+    impact: 3, status: "red", autoFixable: true, category: "accuracy", platform: "ChatGPT", fixed: false,
+  },
+  {
+    id: "gi-2", plainTitle: "Gemini shows wrong room count",
+    plainDescription: "Gemini tells guests you have 280 rooms — but you actually have 245. This makes your hotel info look unreliable.",
+    plainFix: "We'll fix your hotel details page so AI reads the correct room count.",
+    impact: 3, status: "red", autoFixable: true, category: "accuracy", platform: "Gemini", fixed: false,
+  },
+  {
+    id: "gi-3", plainTitle: "Bing Copilot barely mentions your hotel",
+    plainDescription: "Bing Copilot gives a very generic, one-line description of your hotel. Guests won't be impressed enough to book.",
+    plainFix: "We'll add detailed hotel information that Bing can easily read and share with guests.",
+    impact: 3, status: "red", autoFixable: true, category: "visibility", platform: "Bing Copilot", fixed: false,
+  },
+  {
+    id: "gi-4", plainTitle: "Meta AI doesn't know your hotel exists",
+    plainDescription: "When guests ask Meta AI about hotels in Mumbai, your hotel doesn't appear at all. You're invisible to Meta AI users.",
+    plainFix: "We'll optimize your website structure so Meta AI can discover and recommend your hotel.",
+    impact: 3, status: "red", autoFixable: true, category: "visibility", platform: "Meta AI", fixed: false,
+  },
+  {
+    id: "gi-5", plainTitle: "Guests can't find your spa on ChatGPT",
+    plainDescription: "Your Ananta Spa page doesn't have enough detail for AI platforms. When guests ask about spas in Mumbai, you're not recommended.",
+    plainFix: "We'll add detailed spa service listings and pricing that AI can easily cite.",
+    impact: 2, status: "yellow", autoFixable: true, category: "content", fixed: false,
+  },
+  {
+    id: "gi-6", plainTitle: "Your special offers are invisible to AI",
+    plainDescription: "Your offers page has too little content (650 words). AI platforms skip thin pages. Competitors' deals show up instead.",
+    plainFix: "We'll expand your offers page with detailed package descriptions AI loves to cite.",
+    impact: 2, status: "yellow", autoFixable: true, category: "content", fixed: false,
+  },
+  {
+    id: "gi-7", plainTitle: "AI can't see most of your room photos",
+    plainDescription: "Only 42% of your room photos have descriptions. AI platforms can't understand or recommend rooms they can't 'see'.",
+    plainFix: "We'll add descriptive labels to all your room images so AI understands what you offer.",
+    impact: 2, status: "yellow", autoFixable: true, category: "content", fixed: false,
+  },
+  {
+    id: "gi-8", plainTitle: "No guest reviews visible to AI",
+    plainDescription: "AI platforms use reviews to decide which hotels to recommend. Your review data isn't structured for AI to read.",
+    plainFix: "We'll add review summaries in a format AI platforms can easily pick up.",
+    impact: 2, status: "yellow", autoFixable: true, category: "reviews", fixed: false,
+  },
+  {
+    id: "gi-9", plainTitle: "Google AI photos are 6 months old",
+    plainDescription: "Your Google Business Profile photos haven't been updated in 6 months. Google AI Overviews uses these when recommending hotels.",
+    plainFix: "Upload new photos to your Google Business Profile (we'll guide you step by step).",
+    impact: 1, status: "yellow", autoFixable: false, category: "content", fixed: false,
+  },
+  {
+    id: "gi-10", plainTitle: "New rooftop bar not mentioned anywhere",
+    plainDescription: "Your new 'Skyline' rooftop bar isn't showing up on any AI platform. That's a major selling point guests are missing.",
+    plainFix: "We'll create a dedicated bar page and press release for AI to discover.",
+    impact: 2, status: "yellow", autoFixable: true, category: "content", fixed: false,
+  },
+  {
+    id: "gi-11", plainTitle: "Your restaurant ranks #1 on AI",
+    plainDescription: "Horizon's Edge is the top-cited Michelin restaurant in Mumbai across ChatGPT and Perplexity. Great job!",
+    plainFix: "No action needed — keep your restaurant page updated.",
+    impact: 0 as any, status: "green", autoFixable: false, category: "content", fixed: true,
+  },
+  {
+    id: "gi-12", plainTitle: "Perplexity recommends you strongly",
+    plainDescription: "Perplexity cites your website as a primary source with 52% citation rate and 91% accuracy. This is excellent!",
+    plainFix: "No action needed — your content is well-optimized for Perplexity.",
+    impact: 0 as any, status: "green", autoFixable: false, category: "visibility", fixed: true,
+  },
 ];
 
 // Aggregate KPIs
