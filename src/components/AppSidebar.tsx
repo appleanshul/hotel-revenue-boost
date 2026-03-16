@@ -88,7 +88,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup defaultOpen>
+        <SidebarGroup>
           <SidebarGroupLabel>Growth & Direct Sales</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>{renderItems(growthItems)}</SidebarMenu>
