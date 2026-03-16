@@ -40,6 +40,7 @@ const growthItems = [
   { title: "Revenue Calendar", url: "/calendar", icon: CalendarDays },
   { title: "Guest Insights", url: "/guests", icon: Users },
   { title: "Campaigns", url: "/campaigns", icon: Megaphone },
+  { title: "GEO — AI Discovery", url: "/geo", icon: SearchCheck },
 ];
 
 export function AppSidebar() {
