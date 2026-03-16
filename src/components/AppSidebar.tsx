@@ -9,6 +9,7 @@ import {
   Users,
   Megaphone,
   Hotel,
+  SearchCheck,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -39,6 +40,7 @@ const growthItems = [
   { title: "Revenue Calendar", url: "/calendar", icon: CalendarDays },
   { title: "Guest Insights", url: "/guests", icon: Users },
   { title: "Campaigns", url: "/campaigns", icon: Megaphone },
+  { title: "GEO — AI Discovery", url: "/geo", icon: SearchCheck },
 ];
 
 export function AppSidebar() {
