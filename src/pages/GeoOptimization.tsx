@@ -1,57 +1,40 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { AiVisibilityDashboard } from "@/components/geo/AiVisibilityDashboard";
-import { ContentAudit } from "@/components/geo/ContentAudit";
-import { AiPlatformMonitor } from "@/components/geo/AiPlatformMonitor";
-import { ContentCampaignGenerator } from "@/components/geo/ContentCampaignGenerator";
+import { AiReportCard } from "@/components/geo/AiReportCard";
+import { FixIssues } from "@/components/geo/FixIssues";
 import { CompetitorIntelligence } from "@/components/geo/CompetitorIntelligence";
-import {
-  BarChart3,
-  FileCode,
-  Eye,
-  Megaphone,
-  Swords,
-} from "lucide-react";
+import { ClipboardCheck, Wrench, Trophy } from "lucide-react";
+import { useState } from "react";
 
 const GeoOptimization = () => {
+  const [activeTab, setActiveTab] = useState("report-card");
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Generative Engine Optimization</h1>
+        <h1 className="text-2xl font-bold tracking-tight">AI Discovery Autopilot</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          Maximize hotel discoverability across ChatGPT, Gemini, Perplexity, Google AI Overviews, Bing Copilot & Meta AI
+          See how AI platforms like ChatGPT, Gemini & Google recommend your hotel — and fix issues with one click
         </p>
       </div>
 
-      <Tabs defaultValue="visibility" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/50 p-1">
-          <TabsTrigger value="visibility" className="text-xs gap-1.5">
-            <BarChart3 className="h-3.5 w-3.5" /> AI Visibility
+          <TabsTrigger value="report-card" className="text-xs gap-1.5">
+            <ClipboardCheck className="h-3.5 w-3.5" /> AI Report Card
           </TabsTrigger>
-          <TabsTrigger value="content-audit" className="text-xs gap-1.5">
-            <FileCode className="h-3.5 w-3.5" /> Content Audit
-          </TabsTrigger>
-          <TabsTrigger value="platform-monitor" className="text-xs gap-1.5">
-            <Eye className="h-3.5 w-3.5" /> Platform Monitor
-          </TabsTrigger>
-          <TabsTrigger value="campaigns" className="text-xs gap-1.5">
-            <Megaphone className="h-3.5 w-3.5" /> Content & Campaigns
+          <TabsTrigger value="fix-issues" className="text-xs gap-1.5">
+            <Wrench className="h-3.5 w-3.5" /> Fix Issues
           </TabsTrigger>
           <TabsTrigger value="competitors" className="text-xs gap-1.5">
-            <Swords className="h-3.5 w-3.5" /> Competitor Intel
+            <Trophy className="h-3.5 w-3.5" /> Competitors
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="visibility">
-          <AiVisibilityDashboard />
+        <TabsContent value="report-card">
+          <AiReportCard onFixIssue={() => setActiveTab("fix-issues")} />
         </TabsContent>
-        <TabsContent value="content-audit">
-          <ContentAudit />
-        </TabsContent>
-        <TabsContent value="platform-monitor">
-          <AiPlatformMonitor />
-        </TabsContent>
-        <TabsContent value="campaigns">
-          <ContentCampaignGenerator />
+        <TabsContent value="fix-issues">
+          <FixIssues />
         </TabsContent>
         <TabsContent value="competitors">
           <CompetitorIntelligence />
