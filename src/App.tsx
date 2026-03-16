@@ -13,6 +13,7 @@ import DirectBooking from "@/pages/DirectBooking";
 import RevenueCalendar from "@/pages/RevenueCalendar";
 import GuestRevenue from "@/pages/GuestRevenue";
 import Campaigns from "@/pages/Campaigns";
+import GeoOptimization from "@/pages/GeoOptimization";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
