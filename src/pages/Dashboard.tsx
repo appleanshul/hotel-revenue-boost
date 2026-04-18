@@ -13,6 +13,7 @@ import {
 import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Bar, BarChart, ResponsiveContainer } from "recharts";
 import { todayKPIs, dailyRevenue, formatCurrency, revenueBySegment } from "@/data/mock-data";
 import { generateDailyBriefing } from "@/lib/revenue-ai-engine";
+import { UpcomingEventsPanel } from "@/components/UpcomingEventsPanel";
 import { Link } from "react-router-dom";
 
 const briefing = generateDailyBriefing();
@@ -109,6 +110,9 @@ export default function Dashboard() {
           </Card>
         ))}
       </div>
+
+      {/* Upcoming Events & Pricing Impact */}
+      <UpcomingEventsPanel />
 
       {/* Charts row */}
       <div className="grid lg:grid-cols-3 gap-4">
