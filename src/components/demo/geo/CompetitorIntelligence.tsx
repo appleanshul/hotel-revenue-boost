@@ -14,7 +14,7 @@ import {
   ArrowRight,
   Sparkles,
 } from "lucide-react";
-import { competitors, aiPlatforms, travelQueries, hotelConfig } from "@/data/geo-mock-data";
+import { competitors, aiPlatforms, travelQueries, hotelConfig } from "@/demo/data/geo-mock-data";
 import { useToast } from "@/hooks/use-toast";
 
 const yourScore = Math.round(aiPlatforms.reduce((s, p) => s + p.score, 0) / aiPlatforms.length);

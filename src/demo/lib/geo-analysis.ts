@@ -9,7 +9,7 @@ import {
   type AiPlatform,
   type ContentPage,
   type ContentSuggestion,
-} from "@/data/geo-mock-data";
+} from "@/demo/data/geo-mock-data";
 
 // ---- Firecrawl-ready stubs ----
 

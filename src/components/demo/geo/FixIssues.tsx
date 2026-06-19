@@ -12,7 +12,7 @@ import {
   Wrench,
   Sparkles,
 } from "lucide-react";
-import { geoIssues, type GeoIssue } from "@/data/geo-mock-data";
+import { geoIssues, type GeoIssue } from "@/demo/data/geo-mock-data";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 

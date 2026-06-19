@@ -1,109 +1,50 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, Crown, Star, Medal } from "lucide-react";
-import { topGuests, formatCurrency } from "@/data/mock-data";
-
-const segmentColors: Record<string, string> = {
-  platinum: "bg-primary text-primary-foreground",
-  gold: "bg-accent text-accent-foreground",
-  silver: "bg-muted-foreground text-background",
-  bronze: "bg-muted text-muted-foreground",
-};
-
-const segmentIcons: Record<string, typeof Crown> = {
-  platinum: Crown,
-  gold: Star,
-  silver: Medal,
-  bronze: Users,
-};
-
-const totalLTV = topGuests.reduce((s, g) => s + g.totalSpend, 0);
-const avgLTV = Math.round(totalLTV / topGuests.length);
-const repeatRate = Math.round(topGuests.filter((g) => g.totalStays > 1).length / topGuests.length * 100);
+import { Users } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useUpsellLogs, useReservationsRange, formatINR } from "@/lib/re-data/hooks";
+import { EmptyState } from "@/components/states/EmptyState";
+import { LoadingState } from "@/components/states/LoadingState";
 
 export default function GuestRevenue() {
+  const { hotelId } = useAuth();
+  const today = new Date().toISOString().slice(0, 10);
+  const from = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
+  const reservations = useReservationsRange(hotelId, from, today);
+  const upsells = useUpsellLogs(hotelId);
+
+  const upsellRevenue = (upsells.data ?? []).reduce((s: number, u: any) => s + Number(u.revenue_added ?? 0), 0);
+
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-[1440px] mx-auto">
-      <div className="flex items-center gap-3">
-        <Users className="h-7 w-7 text-primary" />
-        <div>
-          <h1 className="text-2xl font-bold">Guest Revenue Insights</h1>
-          <p className="text-sm text-muted-foreground">Lifetime value tracking, high-value guest identification & re-engagement</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground">Total Guest LTV</p><p className="text-xl font-bold">{formatCurrency(totalLTV)}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground">Avg LTV per Guest</p><p className="text-xl font-bold">{formatCurrency(avgLTV)}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground">Repeat Rate</p><p className="text-xl font-bold">{repeatRate}%</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground">Top Segment</p><p className="text-xl font-bold">Platinum</p><p className="text-[10px] text-muted-foreground">{topGuests.filter((g) => g.segment === "platinum").length} guests</p></CardContent></Card>
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Guest Insights</h1>
+        <p className="text-sm text-muted-foreground">Segments, loyalty and ancillary revenue per guest</p>
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Top Revenue Guests</CardTitle></CardHeader>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base flex items-center gap-2"><Users className="h-4 w-4" /> Guests (last 90 days)</CardTitle>
+          <CardDescription>From your PMS reservations</CardDescription>
+        </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Guest</TableHead>
-                <TableHead>Segment</TableHead>
-                <TableHead>Source</TableHead>
-                <TableHead className="text-right">Total Spend</TableHead>
-                <TableHead className="text-right">Stays</TableHead>
-                <TableHead className="text-right">Avg/Night</TableHead>
-                <TableHead className="text-right">Last Stay</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {topGuests.map((g) => {
-                const Icon = segmentIcons[g.segment] || Users;
-                return (
-                  <TableRow key={g.id}>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{g.name}</p>
-                        <p className="text-xs text-muted-foreground">{g.email}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={`text-[10px] ${segmentColors[g.segment]}`}>
-                        <Icon className="h-3 w-3 mr-1" />
-                        {g.segment}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm capitalize">{g.source.replace("-", " ")}</TableCell>
-                    <TableCell className="text-right font-semibold">{formatCurrency(g.totalSpend)}</TableCell>
-                    <TableCell className="text-right">{g.totalStays}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(g.avgNightlySpend)}</TableCell>
-                    <TableCell className="text-right text-sm text-muted-foreground">
-                      {new Date(g.lastStay).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+          {reservations.isLoading ? <LoadingState /> : reservations.isEmpty ? (
+            <EmptyState icon={Users} title="No guest data yet" description="Reservations from the last 90 days will populate guest segments here." />
+          ) : (
+            <p className="text-sm text-muted-foreground">{reservations.data!.length} reservations</p>
+          )}
         </CardContent>
       </Card>
 
-      {/* Re-engagement suggestions */}
-      <Card className="border-primary/30 bg-primary/5">
-        <CardHeader><CardTitle className="text-base">🔄 AI Re-engagement Suggestions</CardTitle></CardHeader>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Upsell performance</CardTitle>
+        </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-3 gap-3">
-            {[
-              { title: "Win-back Campaign", desc: "3 bronze guests haven't visited in 6+ months. Send personalized offer with 15% discount.", target: "Bronze guests" },
-              { title: "Loyalty Upgrade Nudge", desc: "2 silver guests are close to gold status. Send progress update + booking incentive.", target: "Silver → Gold" },
-              { title: "Anniversary Reminder", desc: "Sunita Verma's anniversary on Mar 15. Send a personalized celebration package offer.", target: "VIP guests" },
-            ].map((s, i) => (
-              <div key={i} className="p-4 rounded-lg bg-background border space-y-2">
-                <p className="font-semibold text-sm">{s.title}</p>
-                <p className="text-xs text-muted-foreground">{s.desc}</p>
-                <Badge variant="outline" className="text-[10px]">{s.target}</Badge>
-              </div>
-            ))}
-          </div>
+          {upsells.isLoading ? <LoadingState /> : upsells.isEmpty ? (
+            <EmptyState title="No upsell offers logged" description="As your team offers upgrades and add-ons at check-in, results will appear here." />
+          ) : (
+            <p className="text-sm text-muted-foreground">{upsells.data!.length} offers · {formatINR(upsellRevenue)} added revenue</p>
+          )}
         </CardContent>
       </Card>
     </div>
