@@ -46,7 +46,7 @@ export default function AiCommandCenter() {
           ) : suggestions.isEmpty ? (
             <EmptyState title="No pending recommendations" description="AI recommendations for pricing, upsells and channel mix will appear here." />
           ) : (
-            <div className="text-sm text-muted-foreground">{suggestions.data!.length} pending</div>
+            <div className="text-sm text-muted-foreground">{(suggestions.data ?? []).length} pending</div>
           )}
         </CardContent>
       </Card>
