@@ -149,21 +149,6 @@ export default function Dashboard() {
               ))}
             </div>
           )}
-                <div key={e.id} className="flex items-center justify-between p-3 rounded-md border">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{e.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {e.start_date}{e.end_date && e.end_date !== e.start_date ? ` → ${e.end_date}` : ""}
-                      {e.venue ? ` · ${e.venue}` : ""}
-                    </p>
-                  </div>
-                  {e.suggested_uplift_pct && (
-                    <Badge variant="secondary">+{e.suggested_uplift_pct}%</Badge>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>
