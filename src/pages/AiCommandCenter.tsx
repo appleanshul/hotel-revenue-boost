@@ -46,7 +46,7 @@ export default function AiCommandCenter() {
           ) : suggestions.isEmpty ? (
             <EmptyState title="No pending recommendations" description="AI recommendations for pricing, upsells and channel mix will appear here." />
           ) : (
-            <div className="text-sm text-muted-foreground">{suggestions.data!.length} pending</div>
+            <div className="text-sm text-muted-foreground">{(suggestions.data ?? []).length} pending</div>
           )}
         </CardContent>
       </Card>
@@ -60,7 +60,7 @@ export default function AiCommandCenter() {
           {events.isLoading ? <LoadingState /> : events.isEmpty ? (
             <EmptyState title="No demand signals tracked" description="Add local events or connect a market intelligence feed to start surfacing demand spikes." />
           ) : (
-            <div className="text-sm text-muted-foreground">{events.data!.length} events</div>
+            <div className="text-sm text-muted-foreground">{(events.data ?? []).length} events</div>
           )}
         </CardContent>
       </Card>
