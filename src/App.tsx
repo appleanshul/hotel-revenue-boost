@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Layout } from "@/components/Layout";
+import { DemoLayout } from "@/components/demo/DemoLayout";
 import Auth from "@/pages/Auth";
 import Dashboard from "@/pages/Dashboard";
 import RateManager from "@/pages/RateManager";
@@ -17,6 +18,16 @@ import RevenueCalendar from "@/pages/RevenueCalendar";
 import GuestRevenue from "@/pages/GuestRevenue";
 import Campaigns from "@/pages/Campaigns";
 import GeoOptimization from "@/pages/GeoOptimization";
+import DemoDashboard from "@/pages/demo/DemoDashboard";
+import DemoRateManager from "@/pages/demo/DemoRateManager";
+import DemoAiCommandCenter from "@/pages/demo/DemoAiCommandCenter";
+import DemoReports from "@/pages/demo/DemoReports";
+import DemoChannelManager from "@/pages/demo/DemoChannelManager";
+import DemoDirectBooking from "@/pages/demo/DemoDirectBooking";
+import DemoRevenueCalendar from "@/pages/demo/DemoRevenueCalendar";
+import DemoGuestRevenue from "@/pages/demo/DemoGuestRevenue";
+import DemoCampaigns from "@/pages/demo/DemoCampaigns";
+import DemoGeoOptimization from "@/pages/demo/DemoGeoOptimization";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +53,18 @@ const App = () => (
                 <Route path="/guests" element={<GuestRevenue />} />
                 <Route path="/campaigns" element={<Campaigns />} />
                 <Route path="/geo" element={<GeoOptimization />} />
+              </Route>
+              <Route element={<DemoLayout />}>
+                <Route path="/demo" element={<DemoDashboard />} />
+                <Route path="/demo/rates" element={<DemoRateManager />} />
+                <Route path="/demo/ai-center" element={<DemoAiCommandCenter />} />
+                <Route path="/demo/reports" element={<DemoReports />} />
+                <Route path="/demo/channels" element={<DemoChannelManager />} />
+                <Route path="/demo/direct-booking" element={<DemoDirectBooking />} />
+                <Route path="/demo/calendar" element={<DemoRevenueCalendar />} />
+                <Route path="/demo/guests" element={<DemoGuestRevenue />} />
+                <Route path="/demo/campaigns" element={<DemoCampaigns />} />
+                <Route path="/demo/geo" element={<DemoGeoOptimization />} />
               </Route>
             </Route>
             <Route path="*" element={<NotFound />} />
