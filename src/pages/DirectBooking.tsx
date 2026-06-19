@@ -46,7 +46,7 @@ export default function DirectBooking() {
           {campaigns.isLoading ? <LoadingState /> : campaigns.isEmpty ? (
             <EmptyState title="No campaigns running" description="Launch a 'Book Direct & Save' offer to drive guests to your website." action={{ label: "Create campaign", disabled: true }} />
           ) : (
-            <p className="text-sm text-muted-foreground">{campaigns.data!.length} campaigns</p>
+            <p className="text-sm text-muted-foreground">{campaigns(.data ?? []).length} campaigns</p>
           )}
         </CardContent>
       </Card>

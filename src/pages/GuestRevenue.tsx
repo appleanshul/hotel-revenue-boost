@@ -30,7 +30,7 @@ export default function GuestRevenue() {
           {reservations.isLoading ? <LoadingState /> : reservations.isEmpty ? (
             <EmptyState icon={Users} title="No guest data yet" description="Reservations from the last 90 days will populate guest segments here." />
           ) : (
-            <p className="text-sm text-muted-foreground">{reservations.data!.length} reservations</p>
+            <p className="text-sm text-muted-foreground">{reservations(.data ?? []).length} reservations</p>
           )}
         </CardContent>
       </Card>
@@ -43,7 +43,7 @@ export default function GuestRevenue() {
           {upsells.isLoading ? <LoadingState /> : upsells.isEmpty ? (
             <EmptyState title="No upsell offers logged" description="As your team offers upgrades and add-ons at check-in, results will appear here." />
           ) : (
-            <p className="text-sm text-muted-foreground">{upsells.data!.length} offers · {formatINR(upsellRevenue)} added revenue</p>
+            <p className="text-sm text-muted-foreground">{upsells(.data ?? []).length} offers · {formatINR(upsellRevenue)} added revenue</p>
           )}
         </CardContent>
       </Card>

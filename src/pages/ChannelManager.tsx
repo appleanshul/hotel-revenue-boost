@@ -32,7 +32,7 @@ export default function ChannelManager() {
             />
           ) : (
             <div className="space-y-2">
-              {snapshots.data!.slice(0, 10).map((s: any) => (
+              {snapshots(.data ?? []).slice(0, 10).map((s: any) => (
                 <div key={s.id} className="flex items-center justify-between p-3 rounded-md border">
                   <div>
                     <p className="text-sm font-medium">{s.channel}</p>
@@ -60,7 +60,7 @@ export default function ChannelManager() {
             />
           ) : (
             <div className="space-y-2">
-              {compSet.data!.map((c: any) => (
+              {compSet(.data ?? []).map((c: any) => (
                 <div key={c.id} className="p-3 rounded-md border">
                   <p className="text-sm font-medium">{c.name}</p>
                   <p className="text-xs text-muted-foreground">{c.stars ? `${c.stars}★` : ""}</p>
