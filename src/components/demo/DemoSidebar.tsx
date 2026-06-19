@@ -8,7 +8,6 @@ import {
   CalendarDays,
   Users,
   Megaphone,
-  Hotel,
   SearchCheck,
   FlaskConical,
 } from "lucide-react";
@@ -27,33 +26,27 @@ import {
   SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@/hooks/useAuth";
 
 const coreItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Rate Manager", url: "/rates", icon: IndianRupee },
-  { title: "AI Command Center", url: "/ai-center", icon: Brain },
-  { title: "Reports & Analytics", url: "/reports", icon: BarChart3 },
-  { title: "Channel Manager", url: "/channels", icon: Globe },
+  { title: "Dashboard", url: "/demo", icon: LayoutDashboard },
+  { title: "Rate Manager", url: "/demo/rates", icon: IndianRupee },
+  { title: "AI Command Center", url: "/demo/ai-center", icon: Brain },
+  { title: "Reports & Analytics", url: "/demo/reports", icon: BarChart3 },
+  { title: "Channel Manager", url: "/demo/channels", icon: Globe },
 ];
 
 const growthItems = [
-  { title: "Direct Booking", url: "/direct-booking", icon: MousePointerClick },
-  { title: "Revenue Calendar", url: "/calendar", icon: CalendarDays },
-  { title: "Guest Insights", url: "/guests", icon: Users },
-  { title: "Campaigns", url: "/campaigns", icon: Megaphone },
-  { title: "GEO — AI Discovery", url: "/geo", icon: SearchCheck },
+  { title: "Direct Booking", url: "/demo/direct-booking", icon: MousePointerClick },
+  { title: "Revenue Calendar", url: "/demo/calendar", icon: CalendarDays },
+  { title: "Guest Insights", url: "/demo/guests", icon: Users },
+  { title: "Campaigns", url: "/demo/campaigns", icon: Megaphone },
+  { title: "GEO — AI Discovery", url: "/demo/geo", icon: SearchCheck },
 ];
 
-const showcaseItems = [
-  { title: "Demo Mode", url: "/demo", icon: FlaskConical },
-];
-
-export function AppSidebar() {
+export function DemoSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
-  const { hotelName } = useAuth();
   const isActive = (path: string) => location.pathname === path;
 
   const renderItems = (items: typeof coreItems) =>
@@ -77,15 +70,13 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground font-bold text-sm">
-            RE
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground font-bold text-sm">
+            <FlaskConical className="h-4 w-4" />
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-sidebar-foreground">Revenue Engine</span>
-              <span className="text-[10px] text-sidebar-foreground/60 truncate max-w-[140px]">
-                {hotelName ?? "Live tenant"}
-              </span>
+              <span className="text-sm font-bold text-sidebar-foreground">Demo Mode</span>
+              <span className="text-[10px] text-sidebar-foreground/60">The Grand Horizon</span>
             </div>
           )}
         </div>
@@ -105,20 +96,12 @@ export function AppSidebar() {
             <SidebarMenu>{renderItems(growthItems)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Showcase</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>{renderItems(showcaseItems)}</SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="p-3">
         {!collapsed && (
-          <div className="rounded-lg bg-sidebar-accent/40 px-3 py-2 text-[11px] text-sidebar-foreground/70">
-            <Hotel className="inline h-3 w-3 mr-1" />
-            Powered by SynSok
+          <div className="rounded-lg bg-accent/15 px-3 py-2 text-[11px] text-sidebar-foreground/70">
+            Showcase data only — not connected to PMS
           </div>
         )}
       </SidebarFooter>
