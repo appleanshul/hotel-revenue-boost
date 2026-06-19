@@ -33,7 +33,7 @@ export default function RateManager() {
             <EmptyState icon={IndianRupee} title="No room types found" description="Add room types in your PMS to manage rates here." />
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
-              {rooms(.data ?? []).map((r: any) => (
+              {(rooms.data ?? []).map((r: any) => (
                 <div key={r.id} className="rounded-md border p-3">
                   <p className="text-sm font-semibold text-foreground">{r.name ?? r.label ?? "Room"}</p>
                   <p className="text-xs text-muted-foreground">
@@ -67,7 +67,7 @@ export default function RateManager() {
               action={{ label: "Add rate", disabled: true }}
             />
           ) : (
-            <div className="text-sm text-muted-foreground">{rates(.data ?? []).length} rate entries</div>
+            <div className="text-sm text-muted-foreground">{(rates.data ?? []).length} rate entries</div>
           )}
         </CardContent>
       </Card>
@@ -90,7 +90,7 @@ export default function RateManager() {
             />
           ) : (
             <div className="space-y-2">
-              {suggestions(.data ?? []).slice(0, 10).map((s: any) => (
+              {(suggestions.data ?? []).slice(0, 10).map((s: any) => (
                 <div key={s.id} className="flex items-center justify-between p-3 rounded-md border">
                   <div>
                     <p className="text-sm font-medium">{s.date}</p>

@@ -30,7 +30,7 @@ export default function RevenueCalendar() {
           {reservations.isLoading ? <LoadingState /> : reservations.isEmpty ? (
             <EmptyState icon={CalendarDays} title="No forward reservations" description="As future bookings come in via PMS they'll plot here by date." />
           ) : (
-            <p className="text-sm text-muted-foreground">{reservations(.data ?? []).length} reservations in the next 60 days</p>
+            <p className="text-sm text-muted-foreground">{(reservations.data ?? []).length} reservations in the next 60 days</p>
           )}
         </CardContent>
       </Card>
@@ -43,7 +43,7 @@ export default function RevenueCalendar() {
           {events.isLoading ? <LoadingState /> : events.isEmpty ? (
             <EmptyState title="No events scheduled" description="Add demand-driving events so the calendar can suggest rate uplifts." />
           ) : (
-            <p className="text-sm text-muted-foreground">{events(.data ?? []).length} events</p>
+            <p className="text-sm text-muted-foreground">{(events.data ?? []).length} events</p>
           )}
         </CardContent>
       </Card>
@@ -56,7 +56,7 @@ export default function RevenueCalendar() {
           {rates.isLoading ? <LoadingState /> : rates.isEmpty ? (
             <EmptyState title="No published rates" description="Publish daily rates from Rate Manager to populate the calendar." />
           ) : (
-            <p className="text-sm text-muted-foreground">{rates(.data ?? []).length} rates published</p>
+            <p className="text-sm text-muted-foreground">{(rates.data ?? []).length} rates published</p>
           )}
         </CardContent>
       </Card>
