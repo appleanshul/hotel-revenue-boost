@@ -13,8 +13,8 @@ import { supabase } from "@/integrations/supabase/client";
 const enabled = (hotelId: string | null | undefined): hotelId is string =>
   typeof hotelId === "string" && hotelId.length > 0;
 
-function wrap<T>(q: ReturnType<typeof useQuery<T>>) {
-  const data = q.data as T | undefined;
+function wrap(q: ReturnType<typeof useQuery<any>>) {
+  const data: any = q.data;
   const isEmpty =
     !q.isLoading &&
     !q.error &&
@@ -22,9 +22,9 @@ function wrap<T>(q: ReturnType<typeof useQuery<T>>) {
       data === null ||
       (Array.isArray(data) && data.length === 0));
   return {
-    data,
+    data: data as any,
     isLoading: q.isLoading,
-    error: q.error as Error | null,
+    error: (q.error as Error | null) ?? null,
     isEmpty,
     refetch: q.refetch,
   };
