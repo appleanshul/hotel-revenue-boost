@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MousePointerClick, TrendingUp, Globe, ArrowRight, Gift, ShieldCheck } from "lucide-react";
-import { todayKPIs, formatCurrency, channelPerformance } from "@/data/mock-data";
+import { todayKPIs, formatCurrency, channelPerformance } from "@/demo/data/mock-data";
 
 const directChannel = channelPerformance.find((c) => c.channel === "direct")!;
 const otaChannels = channelPerformance.filter((c) => c.commission > 0);

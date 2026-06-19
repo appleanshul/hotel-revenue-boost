@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, RefreshCw, TrendingUp, Flame, Sparkles } from "lucide-react";
-import { localEvents, TODAY, roomInventory } from "@/data/mock-data";
+import { localEvents, TODAY, roomInventory } from "@/demo/data/mock-data";
 
 const IMPACT_UPLIFT: Record<"low" | "medium" | "high", number> = {
   low: 5,

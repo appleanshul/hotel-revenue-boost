@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Megaphone, Plus, Brain } from "lucide-react";
-import { campaigns, formatCurrency } from "@/data/mock-data";
+import { campaigns, formatCurrency } from "@/demo/data/mock-data";
 
 const statusColors: Record<string, string> = {
   active: "bg-success text-success-foreground",

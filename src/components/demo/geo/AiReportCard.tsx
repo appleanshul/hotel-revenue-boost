@@ -16,7 +16,7 @@ import {
   Eye,
   ChevronRight,
 } from "lucide-react";
-import { aiPlatforms, geoKpis, geoScoreHistory, geoIssues, hotelConfig } from "@/data/geo-mock-data";
+import { aiPlatforms, geoKpis, geoScoreHistory, geoIssues, hotelConfig } from "@/demo/data/geo-mock-data";
 import { useState } from "react";
 
 function getGrade(score: number): { grade: string; color: string } {

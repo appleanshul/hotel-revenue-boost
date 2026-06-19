@@ -2,8 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Brain, Globe, AlertTriangle, CheckCircle } from "lucide-react";
-import { channelPerformance, formatCurrency } from "@/data/mock-data";
-import { generateChannelSuggestions } from "@/lib/revenue-ai-engine";
+import { channelPerformance, formatCurrency } from "@/demo/data/mock-data";
+import { generateChannelSuggestions } from "@/demo/lib/revenue-ai-engine";
 
 const suggestions = generateChannelSuggestions();
 const totalBookings = channelPerformance.reduce((s, c) => s + c.bookings, 0);

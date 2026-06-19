@@ -11,9 +11,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Bar, BarChart, ResponsiveContainer } from "recharts";
-import { todayKPIs, dailyRevenue, formatCurrency, revenueBySegment } from "@/data/mock-data";
-import { generateDailyBriefing } from "@/lib/revenue-ai-engine";
-import { UpcomingEventsPanel } from "@/components/UpcomingEventsPanel";
+import { todayKPIs, dailyRevenue, formatCurrency, revenueBySegment } from "@/demo/data/mock-data";
+import { generateDailyBriefing } from "@/demo/lib/revenue-ai-engine";
+import { UpcomingEventsPanel } from "@/components/demo/UpcomingEventsPanel";
 import { Link } from "react-router-dom";
 
 const briefing = generateDailyBriefing();

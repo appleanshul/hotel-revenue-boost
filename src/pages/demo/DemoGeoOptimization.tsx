@@ -1,7 +1,7 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { AiReportCard } from "@/components/geo/AiReportCard";
-import { FixIssues } from "@/components/geo/FixIssues";
-import { CompetitorIntelligence } from "@/components/geo/CompetitorIntelligence";
+import { AiReportCard } from "@/components/demo/geo/AiReportCard";
+import { FixIssues } from "@/components/demo/geo/FixIssues";
+import { CompetitorIntelligence } from "@/components/demo/geo/CompetitorIntelligence";
 import { ClipboardCheck, Wrench, Trophy } from "lucide-react";
 import { useState } from "react";
 

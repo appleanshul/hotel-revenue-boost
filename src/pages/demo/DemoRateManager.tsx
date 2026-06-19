@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingUp, TrendingDown, Brain, Check } from "lucide-react";
-import { roomInventory, seasonalRates, corporateRates, mealPackages, formatCurrency } from "@/data/mock-data";
-import { generatePricingSuggestions } from "@/lib/revenue-ai-engine";
+import { roomInventory, seasonalRates, corporateRates, mealPackages, formatCurrency } from "@/demo/data/mock-data";
+import { generatePricingSuggestions } from "@/demo/lib/revenue-ai-engine";
 
 const pricingSuggestions = generatePricingSuggestions();
 

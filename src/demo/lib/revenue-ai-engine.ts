@@ -9,7 +9,7 @@ import {
   compSetHotels,
   topGuests,
   TODAY,
-} from "@/data/mock-data";
+} from "@/demo/data/mock-data";
 
 // === DYNAMIC PRICING ===
 export interface PricingSuggestion {

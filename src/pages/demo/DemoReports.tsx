@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Bar, BarChart, Line, LineChart, Pie, PieChart, Cell } from "recharts";
-import { dailyRevenue, channelPerformance, revenueBySegment, formatCurrency, todayKPIs } from "@/data/mock-data";
+import { dailyRevenue, channelPerformance, revenueBySegment, formatCurrency, todayKPIs } from "@/demo/data/mock-data";
 
 const revConfig = {
   adr: { label: "ADR", color: "hsl(var(--chart-1))" },

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Users, Crown, Star, Medal } from "lucide-react";
-import { topGuests, formatCurrency } from "@/data/mock-data";
+import { topGuests, formatCurrency } from "@/demo/data/mock-data";
 
 const segmentColors: Record<string, string> = {
   platinum: "bg-primary text-primary-foreground",

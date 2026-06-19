@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays } from "lucide-react";
-import { dailyRevenue, localEvents, formatCurrency, todayKPIs, TODAY } from "@/data/mock-data";
+import { dailyRevenue, localEvents, formatCurrency, todayKPIs, TODAY } from "@/demo/data/mock-data";
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate();

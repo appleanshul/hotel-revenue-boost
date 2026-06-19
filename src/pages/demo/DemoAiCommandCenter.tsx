@@ -5,12 +5,12 @@ import { Brain, TrendingUp, TrendingDown, AlertTriangle, ArrowUpCircle, Zap, Tar
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { todayKPIs, formatCurrency, compSetHotels } from "@/data/mock-data";
+import { todayKPIs, formatCurrency, compSetHotels } from "@/demo/data/mock-data";
 import {
   generatePricingSuggestions,
   generateUnsoldAlerts,
   generateUpsellOpportunities,
-} from "@/lib/revenue-ai-engine";
+} from "@/demo/lib/revenue-ai-engine";
 
 const pricing = generatePricingSuggestions();
 const unsold = generateUnsoldAlerts();
