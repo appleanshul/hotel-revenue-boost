@@ -30,7 +30,7 @@ export default function AiCommandCenter() {
             <EmptyState icon={Brain} title="Briefing not generated yet" description="The daily briefing service has not run for today. It will appear here automatically." action={{ label: "Generate now", disabled: true }} />
           ) : (
             <div className="space-y-2">
-              <p className="text-sm font-semibold">{(briefing.data as any).summary}</p>
+              <p className="text-sm font-semibold">{(briefing.data as any)?.summary ?? "—"}</p>
             </div>
           )}
         </CardContent>
