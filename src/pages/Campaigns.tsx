@@ -32,7 +32,7 @@ export default function Campaigns() {
             />
           ) : (
             <div className="space-y-2">
-              {campaigns.data!.map((c: any) => (
+              {(campaigns.data ?? []).map((c: any) => (
                 <div key={c.id} className="flex items-center justify-between p-3 rounded-md border">
                   <div>
                     <p className="text-sm font-medium">{c.name}</p>

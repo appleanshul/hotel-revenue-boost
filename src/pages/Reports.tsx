@@ -30,7 +30,7 @@ export default function Reports() {
           ) : reservations.isEmpty ? (
             <EmptyState title="No reservations in the last 30 days" description="As reservations are created in your PMS they'll feed performance reports here." />
           ) : (
-            <p className="text-sm text-muted-foreground">{reservations.data!.length} reservations tracked</p>
+            <p className="text-sm text-muted-foreground">{(reservations.data ?? []).length} reservations tracked</p>
           )}
         </CardContent>
       </Card>
@@ -44,7 +44,7 @@ export default function Reports() {
           {snapshots.isLoading ? <LoadingState /> : snapshots.isEmpty ? (
             <EmptyState title="No channel snapshots yet" description="Once channels start recording bookings, daily snapshots will land here." />
           ) : (
-            <p className="text-sm text-muted-foreground">{snapshots.data!.length} snapshots</p>
+            <p className="text-sm text-muted-foreground">{(snapshots.data ?? []).length} snapshots</p>
           )}
         </CardContent>
       </Card>
