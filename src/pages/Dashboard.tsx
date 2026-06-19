@@ -122,6 +122,8 @@ export default function Dashboard() {
         <CardContent>
           {events.isLoading ? (
             <p className="text-sm text-muted-foreground">Loading…</p>
+          ) : events.error ? (
+            <p className="text-sm text-destructive">Couldn't load events: {events.error.message}</p>
           ) : events.isEmpty ? (
             <EmptyState
               icon={CalendarDays}
@@ -131,7 +133,7 @@ export default function Dashboard() {
             />
           ) : (
             <div className="space-y-2">
-              {events.data!.slice(0, 5).map((e: any) => (
+              {(events.data ?? []).slice(0, 5).map((e: any) => (
                 <div key={e.id} className="flex items-center justify-between p-3 rounded-md border">
                   <div>
                     <p className="text-sm font-medium text-foreground">{e.name}</p>
