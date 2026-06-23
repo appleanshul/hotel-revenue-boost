@@ -1,82 +1,49 @@
-# Plan — Live data for Hyatt Pune + /demo tenant for Grand Horizon
+## Goal
 
-## Outcome
+Make "all AI calls must use an OpenAI GPT model (GPT-4.1-mini class or stronger)" a permanent project rule, and prepare the codebase so the first real AI integration follows it.
 
-- The 10 live pages (`/`, `/rates`, `/ai-center`, `/reports`, `/channels`, `/direct-booking`, `/calendar`, `/guests`, `/campaigns`, `/geo`) read **only** from the shared Supabase backend, scoped to Hyatt Regency Pune via `useAuth().hotelId`.
-- Where the backend has nothing yet, the page shows a clean empty state with a CTA (e.g. "Add competitor", "Import from PMS", "Run first GEO audit") instead of fabricated numbers.
-- The existing Grand Horizon mock experience is preserved verbatim under `/demo/*` so you can showcase the full system.
-- Sidebar gets a "Demo Mode" entry; header shows a `Live · Hyatt Regency Pune` badge vs an amber `Demo · The Grand Horizon` badge so it's never ambiguous which tenant is on screen.
+## Current state
 
-## Architecture
+- No live LLM calls exist yet in this project. All "AI" surfaces (AI Command Center, GEO Autopilot, Rate Manager, briefings) currently render mock data from `src/demo/lib/revenue-ai-engine.ts` and `src/demo/data/geo-mock-data.ts`.
+- Live pages (`AiCommandCenter`, `Dashboard`, `GeoOptimization`, etc.) read from Supabase tables (`re_briefings`, `re_price_suggestions`, `re_geo_audits`, …) populated by a backend service that hasn't been wired up here yet.
+- So enforcing the rule today is mostly about **policy + memory**, not refactoring existing model calls.
 
-### 1. Data layer (new `src/lib/re-data/`)
-One small hook per domain, all using TanStack Query + `supabase` client, all keyed by `hotelId`:
+## API key
 
-- `useRevenueKpis(hotelId, date)` — pulls today's `reservations` (status, room_rate, room_count) + `room_types` from PMS to compute occupancy / ADR / RevPAR / arrivals / departures / out-of-order. No mock fallback.
-- `useDailyRevenueSeries(hotelId, days)` — aggregates reservations grouped by date for the trend chart.
-- `useRoomInventory(hotelId)` — `room_types` + counts.
-- `useDailyRates(hotelId, range)` — `re_daily_rates`.
-- `usePriceSuggestions(hotelId)` — `re_price_suggestions`.
-- `useLocalEvents(hotelId)` — `re_local_events`.
-- `useCompSet(hotelId)` — `re_comp_set`.
-- `useChannelSnapshots(hotelId, range)` — `re_channel_snapshots`.
-- `useCampaigns(hotelId)` — `re_campaigns`.
-- `useGeoAudits(hotelId)` / `useGeoIssues(hotelId)` — `re_geo_audits`, `re_geo_issues`.
-- `useBriefing(hotelId, date)` — `re_briefings` for today; if missing, show "Briefing not generated yet" with a "Generate" button (no-op stub for now).
-- `useUpsellLogs(hotelId)` / `useGuestSegments(hotelId)` — `re_upsell_logs` + PMS reservations.
+No new key is needed. Lovable AI Gateway exposes OpenAI GPT models through the auto-provisioned `LOVABLE_API_KEY` (server-side only). We do not need to copy a key from the PMS project, and we must not put any AI key in the frontend. If/when we add an edge function that calls the gateway, Lovable Cloud provisions `LOVABLE_API_KEY` automatically.
 
-Each hook returns `{ data, isLoading, isEmpty, error }` and pages branch on those three states.
+## Model choice
 
-### 2. Shared UI primitives (new)
-- `src/components/states/EmptyState.tsx` — icon + headline + body + optional CTA. Used everywhere a table/chart is empty.
-- `src/components/states/LoadingState.tsx` — skeleton grid.
-- `src/components/states/ErrorState.tsx` — error + retry.
-- `src/components/TenantBadge.tsx` — `Live · {hotelName}` (teal) or `Demo · The Grand Horizon` (amber). Rendered in `Layout` header, replacing the current `Building2 + hotelName` block.
+Lovable AI Gateway does not list a literal `gpt-4.1-mini`. The closest "4.1‑mini or above" GPT models it does expose are:
 
-### 3. Page rewrites (live)
-Every page in `src/pages/*` (except `Auth`, `NotFound`, `Index`) is rewritten to:
-- Drop the `import ... from "@/data/mock-data"` / `geo-mock-data` / `revenue-ai-engine` imports.
-- Pull data via the hooks above using `useAuth().hotelId`.
-- Render `<LoadingState>` / `<EmptyState>` / real content based on hook state.
-- Keep existing layout, charts, and visual identity — only the data source changes.
-- Copy "for The Grand Horizon" subtitles are replaced with the live hotel name.
+- `openai/gpt-5-nano` — cheapest, fast (use for classification/short summaries)
+- `openai/gpt-5-mini` — **default for this project** (general chat, briefings, suggestions)
+- `openai/gpt-5` — for higher-stakes reasoning (pricing logic, GEO audits)
 
-### 4. Demo tenant (`/demo/*`)
-- Move current page components into `src/pages/demo/` as `DemoDashboard.tsx`, `DemoRateManager.tsx`, etc. — each is essentially the current mock-driven page, untouched, just renamed and wrapped in a `<DemoTenantProvider value={{ hotelName: "The Grand Horizon", isDemo: true }}>`.
-- Add `DemoLayout` (same shell as `Layout` but with the amber `Demo` badge and a "← Back to live" link).
-- New routes in `App.tsx`:
-  ```text
-  /demo               -> DemoDashboard
-  /demo/rates         -> DemoRateManager
-  /demo/ai-center     -> DemoAiCommandCenter
-  ... (all 10)
-  ```
-- Demo routes are still behind `ProtectedRoute` (must be signed in), but skip the hotel-module gate — they don't touch the DB.
-- Sidebar gets a third group "Showcase" with a single `Demo Mode` link to `/demo`. Inside `/demo/*` the sidebar swaps to demo links.
+All three are GPT and stronger than 4.1‑mini, so they satisfy the rule.
 
-### 5. Mock data quarantine
-- `src/data/mock-data.ts`, `src/data/geo-mock-data.ts`, `src/lib/revenue-ai-engine.ts`, `src/lib/geo-analysis.ts` → moved to `src/demo/data/` and `src/demo/lib/`. Only files under `src/pages/demo/**` and `src/components/demo/**` may import from there. An ESLint `no-restricted-imports` rule enforces this so live pages can't accidentally pull mock data again.
-- `src/components/UpcomingEventsPanel.tsx`, `src/components/geo/*` are forked: live versions read from hooks; the originals move to `src/components/demo/`.
+## Changes
 
-### 6. Validation pass
-After wiring, the agent will, in one batch:
-1. Run a typecheck (build).
-2. Sign in as Anshul in the preview, walk `/`, `/rates`, `/calendar`, `/geo`, confirm empty states render (Hyatt Pune has no `re_*` rows yet) and the header reads `Live · Hyatt Regency Pune`.
-3. Open `/demo`, confirm the Grand Horizon dashboard renders identically to today's screenshot.
-4. Confirm no network request from a live page targets anything outside the user's `hotel_id`.
-5. Re-run the security scan; resolve any new findings.
+1. **Save the rule to project memory** (`mem://policies/ai-models`) and add a Core line to `mem://index.md`:
+   > All AI features must call OpenAI GPT via Lovable AI Gateway. Default `openai/gpt-5-mini`; use `openai/gpt-5` for heavy reasoning, `openai/gpt-5-nano` for trivial tasks. Never Gemini/Claude/other providers. Never call AI from the browser.
 
-## What is explicitly NOT in this pass
+2. **Add a tiny shared helper** `supabase/functions/_shared/ai-gateway.ts` (Deno) implementing the standard Lovable AI Gateway provider wrapper from the knowledge base, exporting:
+   - `createLovableAiGatewayProvider(key)` — provider factory
+   - `GPT_MODELS = { default: "openai/gpt-5-mini", heavy: "openai/gpt-5", light: "openai/gpt-5-nano" }`
+   
+   This gives every future edge function a single import that already enforces the rule. No edge functions are created in this pass — just the helper, so the next AI feature can't accidentally pick Gemini.
 
-- No AI generation of briefings / price suggestions / GEO audits — those tables stay empty and the UI shows "Not generated yet" with a disabled "Generate" CTA. We can wire the Lovable AI Gateway edge functions in a follow-up.
-- No CSV import or PMS sync UI — empty CTAs link to PMS for now.
-- No new tables or migrations — schema from `revenue_engine_init.sql` is sufficient.
-- No visual redesign — same theme, components, spacing.
+3. **Add a short note** to `docs/SETUP.md` under a new "AI model policy" section pointing future contributors at the rule and the helper.
 
-## Technical notes (for the next agent in build mode)
+4. **Leave demo mock files alone** — they're labeled mock data, not model calls. The mentions of "ChatGPT/Gemini" in `geo-mock-data.ts` are display labels for the GEO Autopilot UI (which monitors multiple AI search platforms) and are correct as-is.
 
-- `reservations` columns we'll rely on: `hotel_id`, `check_in_date`, `check_out_date`, `status`, `total_amount`, `room_type_id`, `channel`. If any of those are named differently in PMS, the hook will fail loudly with an error toast — the security scan / typecheck won't catch schema mismatches, so build mode must `select count(*)` against PMS first and adjust column names before writing the hooks.
-- `total_amount` may not exist; `re_channel_snapshots.revenue` is what feeds the chart for any day where PMS revenue isn't accessible. Hooks should prefer `re_channel_snapshots` when present and fall back to reservation aggregation otherwise.
-- All hooks use `.eq("hotel_id", hotelId)` — RLS already enforces this, but the explicit filter keeps the queries indexable.
-- `useAuth` already exposes `hotelId`, `hotelName`, `status`. No changes needed there.
-- Demo routes must not be reachable without auth (we don't want a public preview), so they stay inside `<ProtectedRoute>`. A future "showcase mode" that allows unauthenticated demo viewing is a separate decision.
+## Out of scope
+
+- Wiring an actual edge function (no AI feature has been requested yet).
+- Enabling Lovable Cloud / provisioning `LOVABLE_API_KEY` — deferred until the first real AI call is built. I'll prompt for it then.
+- Touching the GEO mock platform names.
+
+## Technical notes
+
+- Helper uses `@ai-sdk/openai-compatible` via `npm:` imports, `baseURL: https://ai.gateway.lovable.dev/v1`, header `Lovable-API-Key: ${LOVABLE_API_KEY}`, `X-Lovable-AIG-SDK: vercel-ai-sdk`.
+- Helper file is server-only (under `supabase/functions/`), so it cannot be imported into the React bundle by accident.
