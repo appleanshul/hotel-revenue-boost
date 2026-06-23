@@ -55,3 +55,8 @@ Without **both** the role and the module, login is blocked with a clear message.
 | `manager`        | Own hotel (if module enabled) |
 | `revenue_manager`| Own hotel (if module enabled) — the dedicated RE role |
 | other roles      | Blocked |
+
+## AI model policy
+
+All AI/LLM calls in this project MUST go through `supabase/functions/_shared/ai-gateway.ts` and use one of the approved OpenAI GPT models (`openai/gpt-5-mini` default, `openai/gpt-5` heavy, `openai/gpt-5-nano` light). Non-GPT providers (Gemini, Claude, etc.) are forbidden. No new API key is required — `LOVABLE_API_KEY` is auto-provisioned by Lovable Cloud and stays server-side. Never call AI from the browser.
+
