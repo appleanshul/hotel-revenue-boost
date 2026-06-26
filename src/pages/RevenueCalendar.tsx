@@ -61,7 +61,9 @@ export default function RevenueCalendar() {
           {rates.isLoading ? <LoadingState /> : rates.isEmpty ? (
             <EmptyState title="No published rates" description="Publish daily rates from Rate Manager to populate the calendar." />
           ) : (
-            <p className="text-sm text-muted-foreground">{(rates.data ?? []).length} rates published</p>
+            <div className="text-sm text-muted-foreground">
+              {rateRows.length} rate entries in the next 60 days · avg {formatINR(avgRate)}
+            </div>
           )}
         </CardContent>
       </Card>
