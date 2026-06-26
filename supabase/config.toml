@@ -1,0 +1,4 @@
+project_id = "idiatsdwvqlsprgkxqil"
+
+[functions.re-verify-launch-token]
+verify_jwt = false

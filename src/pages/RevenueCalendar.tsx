@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { CalendarDays } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useLocalEvents, useDailyRates, useReservationsRange } from "@/lib/re-data/hooks";
+import { useLocalEvents, useDailyRatesRange, useReservationsRange, formatINR } from "@/lib/re-data/hooks";
 import { EmptyState } from "@/components/states/EmptyState";
 import { LoadingState } from "@/components/states/LoadingState";
 
@@ -11,8 +11,13 @@ export default function RevenueCalendar() {
   const to = new Date(Date.now() + 60 * 86400000).toISOString().slice(0, 10);
 
   const events = useLocalEvents(hotelId);
-  const rates = useDailyRates(hotelId);
+  const rates = useDailyRatesRange(hotelId, today, to);
   const reservations = useReservationsRange(hotelId, today, to);
+
+  const rateRows = rates.data ?? [];
+  const avgRate = rateRows.length
+    ? Math.round(rateRows.reduce((s: number, r: any) => s + Number(r.rate ?? r.suggested_rate ?? 0), 0) / rateRows.length)
+    : 0;
 
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-[1440px] mx-auto">
@@ -56,7 +61,9 @@ export default function RevenueCalendar() {
           {rates.isLoading ? <LoadingState /> : rates.isEmpty ? (
             <EmptyState title="No published rates" description="Publish daily rates from Rate Manager to populate the calendar." />
           ) : (
-            <p className="text-sm text-muted-foreground">{(rates.data ?? []).length} rates published</p>
+            <div className="text-sm text-muted-foreground">
+              {rateRows.length} rate entries in the next 60 days · avg {formatINR(avgRate)}
+            </div>
           )}
         </CardContent>
       </Card>
