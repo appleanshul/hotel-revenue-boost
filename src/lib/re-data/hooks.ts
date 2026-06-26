@@ -116,6 +116,26 @@ export const useGeoAudits = reTable("re_geo_audits");
 export const useGeoIssues = reTable("re_geo_issues");
 export const useUpsellLogs = reTable("re_upsell_logs");
 
+export function useDailyRatesRange(hotelId: string | null, fromDate: string, toDate: string) {
+  return wrap(
+    useQuery({
+      queryKey: ["re_daily_rates_range", hotelId, fromDate, toDate],
+      enabled: enabled(hotelId),
+      queryFn: async () => {
+        const { data, error } = await (supabase as any)
+          .from("re_daily_rates")
+          .select("*")
+          .eq("hotel_id", hotelId!)
+          .gte("rate_date", fromDate)
+          .lte("rate_date", toDate)
+          .order("rate_date", { ascending: true });
+        if (error) throw error;
+        return data ?? [];
+      },
+    }),
+  );
+}
+
 export function useTodayBriefing(hotelId: string | null, date = new Date().toISOString().slice(0, 10)) {
   return wrap(
     useQuery({
