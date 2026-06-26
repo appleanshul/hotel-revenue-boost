@@ -1,49 +1,64 @@
-## Goal
+# Revenue Engine ↔ PMS Integration Plan
 
-Make "all AI calls must use an OpenAI GPT model (GPT-4.1-mini class or stronger)" a permanent project rule, and prepare the codebase so the first real AI integration follows it.
+Three deliverables requested by the PMS team to make this RE Lovable project a true companion app to the Synsok Core PMS. All work happens in this project; PMS-side migrations (triggers, RPC, HMAC secret) are assumed already in place per their Part A.
 
-## Current state
+---
 
-- No live LLM calls exist yet in this project. All "AI" surfaces (AI Command Center, GEO Autopilot, Rate Manager, briefings) currently render mock data from `src/demo/lib/revenue-ai-engine.ts` and `src/demo/data/geo-mock-data.ts`.
-- Live pages (`AiCommandCenter`, `Dashboard`, `GeoOptimization`, etc.) read from Supabase tables (`re_briefings`, `re_price_suggestions`, `re_geo_audits`, …) populated by a backend service that hasn't been wired up here yet.
-- So enforcing the rule today is mostly about **policy + memory**, not refactoring existing model calls.
+## C1. Price Suggestion Approval UI
 
-## API key
+**Where:** `src/pages/RateManager.tsx` (existing "AI price suggestions" card)
 
-No new key is needed. Lovable AI Gateway exposes OpenAI GPT models through the auto-provisioned `LOVABLE_API_KEY` (server-side only). We do not need to copy a key from the PMS project, and we must not put any AI key in the frontend. If/when we add an edge function that calls the gateway, Lovable Cloud provisions `LOVABLE_API_KEY` automatically.
+- Replace the read-only list with a proper table (shadcn `Table`): Date · Room type · Current rate · Suggested rate · Δ · Rationale · Actions.
+- Filter to `status = 'pending'` in `usePriceSuggestions`.
+- Inline **Approve** / **Reject** buttons per row:
+  - Approve → `supabase.rpc('re_apply_price_suggestion', { suggestion_id, decision: 'approve' })`
+  - Reject → same RPC with `decision: 'reject'`
+- Optimistic update via `useMutation` + `queryClient.invalidateQueries(['re_price_suggestions', hotelId])` and `['re_daily_rates', hotelId]`.
+- Toast success/error; disable buttons while pending.
+- Empty / loading / error states stay as-is.
 
-## Model choice
+## C2. Live data wiring (replace mock occupancy/ADR)
 
-Lovable AI Gateway does not list a literal `gpt-4.1-mini`. The closest "4.1‑mini or above" GPT models it does expose are:
+**Where:** `src/pages/Dashboard.tsx`, `src/pages/RevenueCalendar.tsx`, `src/pages/Reports.tsx`
 
-- `openai/gpt-5-nano` — cheapest, fast (use for classification/short summaries)
-- `openai/gpt-5-mini` — **default for this project** (general chat, briefings, suggestions)
-- `openai/gpt-5` — for higher-stakes reasoning (pricing logic, GEO audits)
+- Today's KPIs already use `computeKpis(reservations, rooms)` — keep that, but add a published-rate overlay from `re_daily_rates` so ADR shown matches what guests see on channels.
+- Add `useDailyRatesRange(hotelId, from, to)` hook in `src/lib/re-data/hooks.ts` (mirrors `useReservationsRange`).
+- `RevenueCalendar`: each day cell shows occupancy (from reservations) + published rate (from `re_daily_rates`) instead of any constant/mock.
+- `Reports`: 30-day ADR/RevPAR series sourced from `re_daily_rates` join with reservation counts; remove any remaining hardcoded sample arrays.
+- No new tables; reads only.
 
-All three are GPT and stronger than 4.1‑mini, so they satisfy the rule.
+## C3. SSO entry from PMS (launch token)
 
-## Changes
+**Goal:** PMS deep-links into RE with `?launch_token=<jwt>`; RE verifies and signs the user in without a password prompt.
 
-1. **Save the rule to project memory** (`mem://policies/ai-models`) and add a Core line to `mem://index.md`:
-   > All AI features must call OpenAI GPT via Lovable AI Gateway. Default `openai/gpt-5-mini`; use `openai/gpt-5` for heavy reasoning, `openai/gpt-5-nano` for trivial tasks. Never Gemini/Claude/other providers. Never call AI from the browser.
+**Files:**
 
-2. **Add a tiny shared helper** `supabase/functions/_shared/ai-gateway.ts` (Deno) implementing the standard Lovable AI Gateway provider wrapper from the knowledge base, exporting:
-   - `createLovableAiGatewayProvider(key)` — provider factory
-   - `GPT_MODELS = { default: "openai/gpt-5-mini", heavy: "openai/gpt-5", light: "openai/gpt-5-nano" }`
-   
-   This gives every future edge function a single import that already enforces the rule. No edge functions are created in this pass — just the helper, so the next AI feature can't accidentally pick Gemini.
+- New edge function `supabase/functions/re-verify-launch-token/index.ts`
+  - Reads `RE_LAUNCH_HMAC_SECRET` (shared with PMS).
+  - Verifies HMAC-SHA256 signature + `exp` claim (≤ 60 s).
+  - Payload: `{ user_id, hotel_id, role, iat, exp }`.
+  - Uses `SUPABASE_SERVICE_ROLE_KEY` to call `supabase.auth.admin.generateLink({ type: 'magiclink', email })` for the user, returns the `action_link` `hashed_token`.
+  - CORS enabled; returns `{ access_token, refresh_token }` via `verifyOtp` exchange done server-side, OR returns the magiclink for the client to follow.
+- New hook `src/hooks/useLaunchToken.ts` runs once on mount in `App.tsx`:
+  - If `?launch_token=` present → POST to `re-verify-launch-token` → `supabase.auth.setSession({ access_token, refresh_token })` → strip param from URL → continue normal `useAuth` flow.
+  - On failure, redirect to `/auth` with a clear toast.
+- Secret added via `add_secret('RE_LAUNCH_HMAC_SECRET', …)` — user must supply the same value configured in PMS.
 
-3. **Add a short note** to `docs/SETUP.md` under a new "AI model policy" section pointing future contributors at the rule and the helper.
+**Edge function deploy:** `verify_jwt = false` (token isn't a Supabase JWT). All validation in code.
 
-4. **Leave demo mock files alone** — they're labeled mock data, not model calls. The mentions of "ChatGPT/Gemini" in `geo-mock-data.ts` are display labels for the GEO Autopilot UI (which monitors multiple AI search platforms) and are correct as-is.
+---
 
-## Out of scope
+## Technical details
 
-- Wiring an actual edge function (no AI feature has been requested yet).
-- Enabling Lovable Cloud / provisioning `LOVABLE_API_KEY` — deferred until the first real AI call is built. I'll prompt for it then.
-- Touching the GEO mock platform names.
+- All AI/LLM concerns out of scope here (already covered by GPT-only policy).
+- No schema changes in this project. `re_price_suggestions`, `re_daily_rates`, and `re_apply_price_suggestion` RPC are owned by PMS migrations.
+- Generated Supabase types remain untyped (`as any` casts where needed) until PMS publishes a fresh `types.ts`.
+- React Query cache keys already namespaced by `hotelId` — RLS continues to enforce isolation.
 
-## Technical notes
+## Open questions
 
-- Helper uses `@ai-sdk/openai-compatible` via `npm:` imports, `baseURL: https://ai.gateway.lovable.dev/v1`, header `Lovable-API-Key: ${LOVABLE_API_KEY}`, `X-Lovable-AIG-SDK: vercel-ai-sdk`.
-- Helper file is server-only (under `supabase/functions/`), so it cannot be imported into the React bundle by accident.
+1. **HMAC secret value** — do you have the exact `RE_LAUNCH_HMAC_SECRET` string the PMS team configured, or should I generate one and send it back to them? I dont have it. YOu can check with PMS projet or geenrate and send it to them
+2. **Launch token payload shape** — confirming `{ user_id, hotel_id, role, exp }` matches what PMS will sign. If they're sending `email` instead of `user_id`, the edge function changes slightly. - Yes. The user id for Revenue Engine will be setup in PMS
+3. **Approve RPC signature** — confirming `re_apply_price_suggestion(suggestion_id uuid, decision text)` is the exact PMS signature (vs. separate `approve`/`reject` RPCs). Not sure. take your call
+
+Once you confirm #1–3 I'll implement C1, C2, C3 in that order.
